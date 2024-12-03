@@ -20,7 +20,7 @@ docker --version
 docker pull nginx:latest
 ```
 
-3. 이미지가 로컬 머신의 Docker 캐시에 있는지 확인하기 위해 `docker images` 명령어를 실행합니다. 이미지가 있으면 컨테이너를 시작할 때 첫 번째로 Docker Hub에서 다운로드할 필요가 없습니다.
+3. 이미지가 로컬 머신의 Docker 캐시에 있는지 확인하기 위해 `docker images` 명령어를 실행합니다. 로컬 머신에 이미지가 있으면 Docker Hub에서 다운로드하지 않습니다.
 ```bash
 docker images
 ```
@@ -40,22 +40,22 @@ docker images
 docker ps
 ```
 
-7. `curl http://localhost:8080` 명령어를 실행하여 `nginx` 컨테이너를 사용하고 기본 `index.html`이 작동하는지 확인합니다.
+7. `curl http://localhost:8080` 명령어를 실행하여 Index Page(`index.html`)가 작동하는지 확인합니다.
 ```bash
 curl http://localhost:8080
 ```
 
-8. `docker logs nginx` 명령어를 실행하여 `nginx`에서 생성된 로그를 확인합니다. 몇 차례 `curl` 요청을 보내면 로그가 생성됩니다.
+8. `docker logs nginx` 명령어를 실행하여 `nginx` 컨테이너에서 생성된 로그를 확인합니다. 몇 차례 `curl` 요청을 보내면 로그가 생성됩니다.
 ```bash
 docker logs nginx
 ```
 
-9. `docker exec -it nginx /bin/bash` 명령어를 실행하여 컨테이너의 파일 시스템에 대한 대화형 쉘을 시작합니다.
+9. `docker exec -it nginx /bin/bash` 명령어를 실행하여 컨테이너의 대화형 쉘을 시작합니다.
 ```bash
 docker exec -it nginx /bin/bash
 ```
 
-10. 컨테이너 내에서 `cd /usr/share/nginx/html` 명령어를 실행하고 `cat index.html` 명령어를 실행하여 `nginx`가 제공하는 컨테이너의 내용을 확인합니다.
+10. 컨테이너의 대화형 쉘에서 `cd /usr/share/nginx/html` 명령어를 실행하고 `cat index.html` 명령어를 실행하여 `nginx`가 제공하는 Index Page(`index.html`)의 내용을 확인합니다.
 ```bash
 cd /usr/share/nginx/html
 cat index.html
@@ -66,17 +66,17 @@ cat index.html
 exit
 ```
 
-12. `docker stop nginx` 명령어를 실행하여 컨테이너를 중지합니다.
+12. `docker stop nginx` 명령어를 실행하여 `nginx` 컨테이너를 중지합니다.
 ```bash
 docker stop nginx
 ```
 
-13. `docker ps -a` 명령어를 실행하여 컨테이너가 여전히 있는지 확인합니다.
+13. `docker ps -a` 명령어를 실행하여 실행 중인 컨테이너가 여전히 있는지 확인합니다.
 ```bash
 docker ps -a
 ```
 
-14. `docker rm nginx` 명령어를 실행하여 컨테이너를 삭제합니다.
+14. `docker rm nginx` 명령어를 실행하여 `nginx` 컨테이너를 삭제합니다.
 ```bash
 docker rm nginx
 ```
@@ -99,7 +99,7 @@ mkdir ~/environment/container-image
 cd ~/environment/container-image
 ```
 
-3. `touch Dockerfile` 명령어를 실행하여 빈 `Dockerfile`을 만듭니다. 이 파일에는 컨테이너 이미지를 빌드하는 데 필요한 일련의 단계가 포함됩니다.
+3. `touch Dockerfile` 명령어를 실행하여 빈 `Dockerfile`을 만듭니다. 이 파일에는 컨테이너 이미지를 빌드하는 데 필요한 일련의 단계를 추가할 것입니다.
 ```bash
 touch Dockerfile
 ```
@@ -112,7 +112,7 @@ COPY index.html /usr/share/nginx/html
 EOF
 ```
 
-5. `touch index.html` 명령어를 실행하여 빈 HTML 파일을 만듭니다. 이 파일에는 간단한 메시지가 포함됩니다.
+5. `touch index.html` 명령어를 실행하여 빈 HTML 파일을 만듭니다.
 ```bash
 touch index.html
 ```
@@ -127,7 +127,7 @@ echo "We've added our own custom content into the container" >> index.html
 docker build -t nginx:1.0 .
 ```
 
-8. `docker history nginx:1.0` 명령어를 실행하여 `nginx:1.0`이 빌드되는 모든 단계와 기본 컨테이너를 확인합니다. 우리의 변경 사항은 하나의 작은 레이어에 불과하다는 것을 주목하세요.
+8. `docker history nginx:1.0` 명령어를 실행하여 `nginx:1.0`이 빌드되는 모든 단계와 기본 컨테이너를 확인합니다. 우리의 변경 사항이 하나의 작은 레이어에 불과하다는 것을 확인할 수 있습니다.
 ```bash
 docker history nginx:1.0
 ```
@@ -163,27 +163,31 @@ sudo docker inspect nginx
 docker rm nginx
 ```
 
-17. 이번엔 파일을 이미지에 포함시키는 대신 호스트에서 파일을 마운트하여 컨테이너에 탑재합니다.
+## 컨테이너 파일 시스템 마운트하기
+
+1. 이번엔 파일을 이미지에 포함시키는 대신, 호스트의 파일을 마운트하여 컨테이너에 탑재합니다.
+
+`-v` 옵션은 호스트의 파일을 컨테이너에 마운트합니다. `:ro` 옵션은 읽기 전용으로 마운트합니다.
 ```bash
 docker run -d -p 8080:80 -v /home/ec2-user/environment/container-image/index.html:/usr/share/nginx/html/index.html\:ro --name nginx nginx:latest
 ```
 
-18. 이제 `curl http://localhost:8080` 명령어를 실행하여 컨테이너의 내용을 확인합니다. 이번에는 이미지가 Docker Hub에서 제공하는 기본 `nginx` 이미지이지만 컨테이너의 내용이 있습니다.
+3. 이제 `curl http://localhost:8080` 명령어를 실행하여 컨테이너의 내용을 확인합니다. 이번에는 이미지가 Docker Hub에서 제공하는 기본 `nginx` 이미지이지만 컨테이너의 내용이 있습니다.
 ```bash
 curl http://localhost:8080
 ```
 
-19. `index.html` 파일을 편집하고 몇 가지 추가 사항을 추가합니다.
+4. `index.html` 파일을 편집하고 몇 가지 추가 사항을 추가합니다.
 ```bash
 echo "This is another line I've added to my container" >> index.html
 ```
 
-20. 다른 터미널 탭에서 `curl http://localhost:8080` 명령어를 실행하여 컨테이너의 내용을 확인합니다. 이미지 재실행 없이 변경 사항이 반영된 것을 확인할 수 있습니다.
+5. 다른 터미널 탭에서 `curl http://localhost:8080` 명령어를 실행하여 컨테이너의 내용을 확인합니다. 이미지 재실행 없이 변경 사항이 반영된 것을 확인할 수 있습니다.
 ```bash
 curl http://localhost:8080
 ```
 
-21. 마지막으로, `docker stop nginx` 명령어와 `docker rm nginx` 명령어를 실행하여 마지막 컨테이너를 중지하고 삭제합니다.
+6. 마지막으로, `docker stop nginx` 명령어와 `docker rm nginx` 명령어를 실행하여 `nginx` 컨테이너를 중지하고 삭제합니다.
 ```bash
 docker stop nginx && docker rm nginx
 ```

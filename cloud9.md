@@ -13,8 +13,9 @@ AWS Cloud9은 브라우저만으로 코드를 작성, 실행 및 디버깅할 �
    - Name: docker-workspace
    - Environment type: New EC2 instance
    - Instance type: t3.small
-   - Platform: Amazon Linux 2
-   - Cost-saving setting: After 30 minutes
+   - Platform: Amazon Linux 2023
+   - Timeout: 1 day
+   - Connection: AWS Systems Manager Manager (SSM)
    - Network settings: Default VPC 사용
 
 4. "Create"를 클릭하여 워크스페이스를 생성합니다.
