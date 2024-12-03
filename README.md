@@ -183,3 +183,11 @@ curl http://localhost:8080
 ```bash
 docker stop nginx && docker rm nginx
 ```
+
+# 심화 실습
+- [Docker 활용하기 - 심화](./advanced.md)
+
+
+# 참고 자료
+- [Dockerfile 문법 알아보기](./command.md)
+- [Docker CLI 살펴 보기](./command.md)
